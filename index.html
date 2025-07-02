@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Silk Road - Marketplace</title>
+    <meta name="description" content="Anonymous marketplace for secure trading. Browse products with complete seller anonymity and privacy protection.">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <h1 class="logo">Silk Road</h1>
+            <nav class="nav">
+                <button class="btn-nav" onclick="showPage('browse')">Browse</button>
+                <button class="btn-nav" onclick="showPage('sell')">Sell</button>
+                <button class="btn-nav" onclick="showPage('about')">About</button>
+            </nav>
+        </div>
+    </header>
+
+    <main class="main">
+        <!-- Browse Page -->
+        <div id="browse-page" class="page active">
+            <div class="container">
+                <h2>Marketplace</h2>
+                <div class="filters">
+                    <input type="text" id="search" placeholder="Search products..." onkeyup="filterProducts()">
+                    <input type="text" id="location-filter" placeholder="Filter by location..." onkeyup="filterProducts()">
+                    <select id="sort" onchange="sortProducts()">
+                        <option value="newest">Newest First</option>
+                        <option value="price-low">Price: Low to High</option>
+                        <option value="price-high">Price: High to Low</option>
+                    </select>
+                </div>
+                <div id="products-grid" class="products-grid"></div>
+            </div>
+        </div>
+
+        <!-- Sell Page -->
+        <div id="sell-page" class="page">
+            <div class="container">
+                <h2>List Your Product</h2>
+                <div class="seller-notice">
+                    <p>🔒 Your identity remains completely anonymous. All seller information is encrypted.</p>
+                </div>
+                <form id="sell-form" class="sell-form">
+                    <div class="form-group">
+                        <label for="product-title">Product Title</label>
+                        <input type="text" id="product-title" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="product-description">Description</label>
+                        <textarea id="product-description" rows="4" required></textarea>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="product-price">Price (£)</label>
+                            <input type="number" id="product-price" step="0.01" min="0" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="product-location">Location</label>
+                            <input type="text" id="product-location" placeholder="Enter your location" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Product Image</label>
+                        <div class="image-selection">
+                            <div class="image-upload-container">
+                                <div class="upload-area" onclick="triggerFileUpload()">
+                                    <div class="upload-icon">📷</div>
+                                    <div class="upload-text">
+                                        <strong>Upload from Device</strong>
+                                        <p>Click to select from Photos, Files, or Camera</p>
+                                    </div>
+                                </div>
+                                <input type="file" id="product-image-file" accept="image/*" style="display: none;" onchange="handleFileUpload(event)">
+                            </div>
+                            
+                            <div class="image-options-divider">
+                                <span>or</span>
+                            </div>
+                            
+                            <div class="image-input-options">
+                                <button type="button" class="btn-secondary" onclick="toggleImageLibrary()">
+                                    <span class="btn-icon">🖼️</span>
+                                    Choose from Library
+                                </button>
+                                <button type="button" class="btn-secondary" onclick="toggleUrlInput()">
+                                    <span class="btn-icon">🔗</span>
+                                    Enter URL
+                                </button>
+                            </div>
+                            
+                            <div id="url-input-container" class="url-input-container" style="display: none;">
+                                <input type="url" id="product-image-url" placeholder="https://example.com/image.jpg">
+                                <button type="button" class="btn-apply" onclick="applyImageUrl()">Apply</button>
+                            </div>
+                            
+                            <div id="image-library" class="image-library" style="display: none;">
+                                <div class="library-header">
+                                    <h4>Select from Library</h4>
+                                    <button type="button" class="close-library" onclick="toggleImageLibrary()">×</button>
+                                </div>
+                                <div class="image-grid">
+                                    <div class="library-item" onclick="selectImage('https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=400&h=300&fit=crop')">
+                                        <img src="https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=200&h=150&fit=crop" alt="Generic Product">
+                                        <span>Product</span>
+                                    </div>
+                                    <div class="library-item" onclick="selectImage('https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400&h=300&fit=crop')">
+                                        <img src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=200&h=150&fit=crop" alt="Electronics">
+                                        <span>Electronics</span>
+                                    </div>
+                                    <div class="library-item" onclick="selectImage('https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400&h=300&fit=crop')">
+                                        <img src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=200&h=150&fit=crop" alt="Shoes">
+                                        <span>Fashion</span>
+                                    </div>
+                                    <div class="library-item" onclick="selectImage('https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=400&h=300&fit=crop')">
+                                        <img src="https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=200&h=150&fit=crop" alt="Watch">
+                                        <span>Accessories</span>
+                                    </div>
+                                    <div class="library-item" onclick="selectImage('https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=400&h=300&fit=crop')">
+                                        <img src="https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=200&h=150&fit=crop" alt="Books">
+                                        <span>Books</span>
+                                    </div>
+                                    <div class="library-item" onclick="selectImage('https://images.unsplash.com/photo-1559056199-641a0ac8b55e?w=400&h=300&fit=crop')">
+                                        <img src="https://images.unsplash.com/photo-1559056199-641a0ac8b55e?w=200&h=150&fit=crop" alt="Food">
+                                        <span>Food & Drink</span>
+                                    </div>
+                                    <div class="library-item" onclick="selectImage('https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?w=400&h=300&fit=crop')">
+                                        <img src="https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?w=200&h=150&fit=crop" alt="Jewelry">
+                                        <span>Jewelry</span>
+                                    </div>
+                                    <div class="library-item" onclick="selectImage('https://images.unsplash.com/photo-1502920917128-1aa500764cbd?w=400&h=300&fit=crop')">
+                                        <img src="https://images.unsplash.com/photo-1502920917128-1aa500764cbd?w=200&h=150&fit=crop" alt="Camera">
+                                        <span>Photography</span>
+                                    </div>
+                                    <div class="library-item" onclick="selectImage('https://images.unsplash.com/photo-1586495777744-4413f21062fa?w=400&h=300&fit=crop')">
+                                        <img src="https://images.unsplash.com/photo-1586495777744-4413f21062fa?w=200&h=150&fit=crop" alt="Home">
+                                        <span>Home & Garden</span>
+                                    </div>
+                                    <div class="library-item" onclick="selectImage('https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=400&h=300&fit=crop')">
+                                        <img src="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=200&h=150&fit=crop" alt="Sports">
+                                        <span>Sports</span>
+                                    </div>
+                                    <div class="library-item" onclick="selectImage('https://images.unsplash.com/photo-1583394838336-acd977736f90?w=400&h=300&fit=crop')">
+                                        <img src="https://images.unsplash.com/photo-1583394838336-acd977736f90?w=200&h=150&fit=crop" alt="Art">
+                                        <span>Art & Crafts</span>
+                                    </div>
+                                    <div class="library-item" onclick="selectImage('https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=400&h=300&fit=crop')">
+                                        <img src="https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=200&h=150&fit=crop" alt="Business">
+                                        <span>Business</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div id="selected-image-preview" class="selected-image-preview" style="display: none;">
+                                <div class="preview-container">
+                                    <img id="preview-image" src="" alt="Selected image">
+                                    <div class="preview-overlay">
+                                        <button type="button" class="btn-change" onclick="changeImage()">Change</button>
+                                        <button type="button" class="btn-remove" onclick="removeSelectedImage()">Remove</button>
+                                    </div>
+                                </div>
+                                <div class="image-info">
+                                    <span id="image-source">Uploaded from device</span>
+                                </div>
+                            </div>
+                        </div>
+                        <small>Upload your own image, choose from our library, or enter an image URL</small>
+                    </div>
+                    <button type="submit" class="btn-primary">List Product Anonymously</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- About Page -->
+        <div id="about-page" class="page">
+            <div class="container">
+                <h2>About Silk Road</h2>
+                <div class="about-content">
+                    <div class="feature-card">
+                        <h3>🔒 Complete Anonymity</h3>
+                        <p>All sellers remain completely anonymous. No personal information is stored or shared.</p>
+                    </div>
+                    <div class="feature-card">
+                        <h3>🌐 Decentralized Trading</h3>
+                        <p>Direct peer-to-peer transactions without intermediaries.</p>
+                    </div>
+                    <div class="feature-card">
+                        <h3>🛡️ Privacy First</h3>
+                        <p>Your browsing and trading activity is kept private and secure.</p>
+                    </div>
+                    <div class="feature-card">
+                        <h3>💰 Secure Payments</h3>
+                        <p>All transactions are handled through secure, encrypted channels.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Product Modal -->
+    <div id="product-modal" class="modal" onclick="closeModal(event)">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <div id="modal-body"></div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
